@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.thesky341.blogapi.mapper.AdminMapper">
+    <insert id="addAdmin" parameterType="admin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin VALUE (
+            NULL, #{name}, #{passwd}
+        )
+    </insert>
+
+    <delete id="deleteAdminById">
+        DELETE FROM admin
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getAdminByName" resultMap="adminMap">
+        SELECT * FROM admin
+        WHERE name = #{name}
+    </select>
+
+    <select id="getAdminById" resultMap="adminMap">
+        SELECT * FROM admin
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllAdmin" resultMap="adminMap">
+        SELECT * FROM admin
+    </select>
+
+    <resultMap id="adminMap" type="admin">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result property="passwd" column="passwd"/>
+    </resultMap>
+
+</mapper>

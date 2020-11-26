@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.thesky341.blogapi.mapper.ArticleContentMapper">
+    <insert id="addArticleContent" parameterType="articleContent"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article_content VALUE (
+            NULL, #{content}
+        )
+    </insert>
+
+    <delete id="deleteArticleContentById">
+        DELETE FROM article_content
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateArticleContent" parameterType="articleContent">
+        UPDATE article_content
+        SET content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getArticleContentById" resultMap="articleContentMap">
+        SELECT * FROM article_content WHERE id = #{id}
+    </select>
+
+    <resultMap id="articleContentMap" type="articleContent">
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+    </resultMap>
+
+</mapper>

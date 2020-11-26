@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.thesky341.blogapi.mapper.ArticleMapper">
+    <insert id="addArticle" parameterType="article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article VALUE (
+            NULL, NOW(),
+            NULL, #{category.id},
+            #{author.id}, #{content.id}, #{title}
+        )
+    </insert>
+
+    <delete id="deleteArticleById">
+        DELETE FROM article
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateArticle" parameterType="article">
+        UPDATE article
+        SET revise_date = NOW(),
+        category_id = #{category.id},
+        author_id = #{author.id},
+        content_id = #{content.id},
+        title = #{title}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getArticleById" resultMap="articleMap">
+        SELECT * FROM article
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllArticleByAuthor" parameterType="admin" resultMap="articleMap">
+        SELECT * FROM article
+        WHERE author_id = #{author.id}
+    </select>
+
+    <select id="getAllArticle" resultMap="articleMap">
+        SELECT * FROM article
+    </select>
+
+    <select id="getArticleListBypagination" parameterType="pagination" resultMap="articleMap">
+        SELECT * FROM article
+        <if test="categoryId != null">
+            WHERE category_id = #{categoryId}
+        </if>
+        ORDER BY create_date DESC
+        LIMIT #{from}, #{num}
+    </select>
+
+    <select id="getAllArticleNumber" resultType="integer">
+        SELECT COUNT(*) FROM article
+    </select>
+
+    <select id="getArticleNumberByCategoryId" resultType="integer">
+        SELECT COUNT(*) FROM article WHERE category_id = #{categoryId}
+    </select>
+
+    <resultMap id="articleMap" type="article">
+        <id property="id" column="id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="reviseDate" column="revise_date"/>
+        <result property="title" column="title"/>
+        <association property="category" column="category_id"
+                     javaType="category"
+                     select="top.thesky341.blogapi.mapper.CategoryMapper.getCategoryById"/>
+        <association property="author" column="author_id"
+                     javaType="admin"
+                     select="top.thesky341.blogapi.mapper.AdminMapper.getAdminById"/>
+        <association property="content" column="content_id"
+                     javaType="articleContent"
+                     select="top.thesky341.blogapi.mapper.ArticleContentMapper.getArticleContentById"/>
+    </resultMap>
+</mapper>

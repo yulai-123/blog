@@ -1,0 +1,40 @@
+spring:
+  profiles:
+    active: prod
+
+---
+server:
+  port: 8083
+
+spring:
+  datasource:
+    username: root
+    password: abcd1234
+    url: jdbc:mysql://localhost:3306/blog
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles: dev
+  jackson:
+    default-property-inclusion: always
+
+mybatis:
+  type-aliases-package: top.thesky341.blogapi.entity
+  mapper-locations: classpath:top/thesky341/blogapi/mapper/*.xml
+
+---
+
+  spring:
+    datasource:
+      username: root
+      password: abcd1234
+      url: jdbc:mysql://localhost:3306/blog
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    profiles: prod
+    jackson:
+      default-property-inclusion: always
+
+  mybatis:
+    type-aliases-package: top.thesky341.blogapi.entity
+    mapper-locations: classpath:top/thesky341/blogapi/mapper/*.xml
+
+  server:
+    port: 8085
