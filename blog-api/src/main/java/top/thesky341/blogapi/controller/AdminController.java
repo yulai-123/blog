@@ -7,15 +7,18 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 import top.thesky341.blogapi.entity.Admin;
 import top.thesky341.blogapi.service.AdminService;
+import top.thesky341.blogapi.util.Common;
 import top.thesky341.blogapi.util.encrypt.MD5SaltEncryption;
 import top.thesky341.blogapi.util.result.Result;
 import top.thesky341.blogapi.util.result.ResultCode;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ *@author thesky
+ *@date 2020/12/5
+ */
 @RestController
 public class AdminController {
     @Resource(name = "adminServiceImpl")
@@ -24,16 +27,10 @@ public class AdminController {
     @RequiresAuthentication
     @PostMapping("/register")
     public Result register(@Valid @RequestBody Admin admin) {
-//        System.out.println(admin);
-        System.out.println(SecurityUtils.getSubject().isAuthenticated());
         String encryptedPasswd = MD5SaltEncryption.encrypt(admin.getPasswd(), admin.getName());
-//        System.out.println(encryptedPasswd);
         admin.setPasswd(encryptedPasswd);
         adminService.addAdmin(admin);
-        Map<String, String> data = new HashMap<>();
-        data.put("name", admin.getName());
-        Result result = Result.success(data);
-        return result;
+        return Result.success("name", admin.getName());
     }
 
     @PostMapping("/login")
@@ -41,14 +38,7 @@ public class AdminController {
         UsernamePasswordToken token = new UsernamePasswordToken(admin.getName(), admin.getPasswd());
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
-        Map<String, String> data = new HashMap<>();
-        Result result = Result.success();
-        return result;
-    }
-
-    @RequestMapping("/shiro/login")
-    public Result shiroLogin() {
-        return new Result(ResultCode.NeedLogin);
+        return Result.success();
     }
 
     @PostMapping("/logout")
@@ -62,12 +52,19 @@ public class AdminController {
     public Result checkLoginState() {
         Subject subject = SecurityUtils.getSubject();
         if(subject.isAuthenticated()) {
-            String name = subject.getPrincipal().toString();
-            Map<String, String> data = new HashMap<>();
-            data.put("name", name);
-            return Result.success(data);
+            String name = Common.getCurrentUserName();
+            return Result.success("name", name);
         } else {
             return new Result(ResultCode.UnauthenticatedException);
         }
+    }
+
+    /**
+     * 由于使用了前后端分离，
+     * 因此需要堵塞 Shiro 原有的登录接口
+     */
+    @RequestMapping("/shiro/login")
+    public Result shiroLogin() {
+        return new Result(ResultCode.NeedLogin);
     }
 }

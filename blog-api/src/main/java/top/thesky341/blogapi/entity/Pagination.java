@@ -3,6 +3,12 @@ package top.thesky341.blogapi.entity;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+/**
+ * 封装了分页查询文章的开始位置和数量
+ * 可以指定查询文章的类别
+ *@author thesky
+ *@date 2020/12/5
+ */
 public class Pagination {
     private int from;
     private int num;

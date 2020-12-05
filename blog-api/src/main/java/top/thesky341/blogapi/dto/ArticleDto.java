@@ -5,6 +5,11 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ * 前端传输过来的文章
+ * @author thesky
+ * @date 2020/12/5
+ */
 public class ArticleDto {
     private int id = -1;
     @NotNull(message = "标题必须存在")
@@ -58,5 +63,15 @@ public class ArticleDto {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "ArticleDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                '}';
     }
 }

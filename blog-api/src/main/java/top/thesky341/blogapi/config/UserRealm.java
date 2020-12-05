@@ -10,6 +10,11 @@ import top.thesky341.blogapi.mapper.AdminMapper;
 
 import javax.annotation.Resource;
 
+/**
+ * 用户用户登录认证以及权限查询
+ * @author thesky
+ * @date 2020/12/5
+ */
 public class UserRealm extends AuthorizingRealm {
     @Resource
     AdminMapper adminMapper;
@@ -19,6 +24,11 @@ public class UserRealm extends AuthorizingRealm {
         return null;
     }
 
+    /**
+     * 登录认证
+     * @param token 保存有用户名、密码等信息
+     * 这里用于获取 AuthenticationInfo, 之后还需要在另一个进行密码匹配
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String name = ((UsernamePasswordToken)token).getUsername();

@@ -10,7 +10,6 @@
                 <el-tag effect="dark" type="info" class="category" color="#409EFF">{{article.category}}</el-tag>
             </el-col>
         </el-row>
-
     </div>
 </template>
 
@@ -46,7 +45,6 @@
         font-size: 32px;
         color: #606266;
         cursor: pointer;
-
     }
     .category {
         margin: 10px;

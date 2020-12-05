@@ -5,6 +5,10 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+/**
+ *@author thesky
+ *@date 2020/12/5
+ */
 public class Article {
     private int id;
     private Date createDate;
@@ -83,5 +87,18 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", createDate=" + createDate +
+                ", reviseDate=" + reviseDate +
+                ", category=" + category +
+                ", author=" + author +
+                ", content=" + content +
+                ", title='" + title + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,10 @@
 package top.thesky341.blogapi.util.result;
 
+/**
+ * 将一些常用的返回状态进行封装
+ * @author thesky
+ * @date 2020/12/5
+ */
 public enum ResultCode {
     SUCCESS(0, "成功"),
     ERROR(1, "错误"),
@@ -15,7 +20,13 @@ public enum ResultCode {
     NotExistArticle(161, "博客不存在"),
     NotExistCategory(162, "分类不存在");
 
+    /**
+     * 状态码
+     */
     private final int code;
+    /**
+     * 提示信息
+     */
     private final String message;
 
     ResultCode(int code, String message) {

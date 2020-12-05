@@ -10,9 +10,8 @@ import top.thesky341.blogapi.util.result.Result;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class CategoryController {
@@ -21,10 +20,8 @@ public class CategoryController {
 
     @GetMapping("/categorylist")
     public Result getCategoryList() {
-        Map<String, Object> data = new HashMap<>();
         List<Category> categoryList = categoryService.getAllCategory();
-        data.put("categoryList", categoryList);
-        return Result.success(data);
+        return Result.success("categoryList", categoryList);
     }
 
     @PostMapping("category")

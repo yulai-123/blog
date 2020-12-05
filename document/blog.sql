@@ -34,3 +34,19 @@ CREATE TABLE article (
   FOREIGN KEY (author_id) REFERENCES admin (id),
   FOREIGN KEY (content_id) REFERENCES article_content (id)
 );
+
+#创建upload_file
+CREATE TABLE upload_file (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  file_name VARCHAR(64) NOT NULL UNIQUE,
+  create_time DATETIME NOT NULL,
+  is_public INT UNSIGNED NOT NULL,
+  other VARCHAR(32));
+
+#创建 information
+CREATE TABLE upload_file (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  file_name VARCHAR(64) NOT NULL UNIQUE,
+  create_time DATETIME NOT NULL,
+  is_public INT UNSIGNED NOT NULL,
+  other VARCHAR(32));

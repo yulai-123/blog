@@ -18,6 +18,9 @@ import java.util.Map;
 
 @Configuration
 public class ShiroConfig {
+    /**
+     * 设置凭证匹配时用的算法：MD5 盐值加密 3 次
+     */
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         String algorithmName = "MD5";
@@ -30,6 +33,9 @@ public class ShiroConfig {
         return credentialsMatcher;
     }
 
+    /**
+     * userReaml 设置凭证匹配方式
+     */
     @Bean
     public UserRealm userRealm(HashedCredentialsMatcher hashedCredentialsMatcher) {
         UserRealm userRealm = new UserRealm();
@@ -37,6 +43,9 @@ public class ShiroConfig {
         return userRealm;
     }
 
+    /**
+     * securityManager 设置 userRealm
+     */
     @Bean
     public SecurityManager securityManager(@Qualifier("userRealm") UserRealm userRealm) {
         DefaultSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -44,6 +53,10 @@ public class ShiroConfig {
         return securityManager;
     }
 
+    /**
+     * shiroFileterFactory 设置了 SecurityManager
+     * 设置了权限，项目实际需要权限是通过注解方式声明的
+     */
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();

@@ -6,6 +6,10 @@ import top.thesky341.blogapi.entity.Admin;
 import top.thesky341.blogapi.mapper.AdminMapper;
 import top.thesky341.blogapi.service.AdminService;
 
+/**
+ * @author thesky
+ * @date 2020/12/5
+ */
 @Service
 public class AdminServiceImpl implements AdminService {
     @Autowired

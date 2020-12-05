@@ -5,6 +5,10 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+/**
+ *@author thesky
+ *@date 2020/12/5
+ */
 public class ArticleContent {
     private int id;
     @NotNull(message = "博客内容必须存在")

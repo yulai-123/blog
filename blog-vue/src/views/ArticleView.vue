@@ -17,9 +17,9 @@
                     </el-col>
                 </el-row>
                 <div class="info">
-                    <span class="el-icon-date create-date"> {{getCreateDate}}</span>
+                    <span class="el-icon-date create-date"> {{getPublishDate}}</span>
                     <span class="author">作者：{{article.author}}</span>
-                    <span class="category">分类：{{article.categoryName}}</span>
+                    <span class="category">分类：{{article.category}}</span>
                 </div>
                 <mavon-editor  class="content" :toolbarsFlag="false" :subfield="false" defaultOpen="preview" v-model="article.content"></mavon-editor>
             </el-col>
@@ -45,7 +45,7 @@
                 article: {
                     id: 0,
                     title: "",
-                    createDate: "",
+                    publishDate: "",
                     reviseDate: "",
                     content: "",
                     categoryName: "",
@@ -55,23 +55,14 @@
         },
         methods: {
             getArticleById(id) {
+                window.a = this
                 let url = "/article/" + id
                 axios.get(url).then((response) => {
                     let result = response.data
                     let code = result.code
                     if(code === 0) {
                         let data = result.data
-                        this.article.id = parseInt(data.id)
-                        this.article.title = data.title
-                        this.article.createDate = data.createDate
-                        if(data.reviseDate !== null) {
-                            this.article.reviseDate = data.reviseDate
-                        } else {
-                            this.article.reviseDate = null
-                        }
-                        this.article.categoryName = data.categoryName
-                        this.article.content = data.articleContent
-                        this.article.author = data.authorName
+                        this.article = data.article
                     } else {
                         this.$message.error(result.message)
                         if(window.history.length >= 3) {
@@ -109,8 +100,8 @@
             }
         },
         computed: {
-            getCreateDate() {
-                return this.article.createDate.substring(0, this.article.createDate.search("T"))
+            getPublishDate() {
+                return this.article.publishDate.substring(0, this.article.publishDate.search("T"))
             },
             ...mapState(['loginState'])
         },

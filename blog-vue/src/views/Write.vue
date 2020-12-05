@@ -9,13 +9,13 @@
             <div class="write-blog-title">
                 <el-input class="write-blog-title-input" type="textarea"
                           :maxlength="30" placeholder="请输入标题..."
-                          v-model="blogTitle" resize="none" autosize></el-input>
+                          v-model="article.title" resize="none" autosize></el-input>
             </div>
-            <mavon-editor v-model="blogContent" class="write-editor"/>
+            <mavon-editor v-model="article.content" class="write-editor"/>
             <div class="write-blog-category">
-                <el-form ref="form" :inline="true" :model="formData" :rules="rules">
+                <el-form ref="article" :inline="true" :model="article" :rules="rules">
                     <el-form-item label="分类为：" prop="category">
-                        <el-select v-model="formData.category" placeholder="请选择">
+                        <el-select v-model="article.category" placeholder="请选择">
                             <el-option
                                     v-for="category in categoryList"
                                     :key="category.id"
@@ -50,11 +50,10 @@
                 }
             }
             return {
-                blogTitle: "",
-                blogContent: "",
-                selectedCategory: "",
-                formData: {
-                    category: ""
+                article: {
+                    title: "",
+                    content: "",
+                    cateogry: ""
                 },
                 rules: {
                     category: [
@@ -72,20 +71,20 @@
         },
         methods: {
             publish() {
-                if(this.blogTitle === "") {
+                if(this.article.title === "") {
                     this.$message.error("博客标题不能为空")
                     return;
                 }
-                if(this.blogContent === "") {
+                if(this.article.content === "") {
                     this.$message.error("博客内容不能为空")
                     return;
                 }
-                this.$refs.form.validate((valid) => {
+                this.$refs.article.validate((valid) => {
                     if(valid) {
                         this.$store.dispatch("addNewArticle", {
-                            title: this.blogTitle,
-                            content: this.blogContent,
-                            categoryName: this.formData.category,
+                            title: this.article.title,
+                            content: this.article.content,
+                            categoryName: this.article.category,
                             $message: this.$message,
                             $router: this.$router
                         })

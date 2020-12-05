@@ -5,6 +5,10 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+/**
+ *@author thesky
+ *@date 2020/12/5
+ */
 public class Admin {
     private int id;
     @NotNull(message = "用户名必须存在")

@@ -142,7 +142,7 @@ let actions = {
     reviseArticle: function (context, data) {
         let $message = data.$message
         let $router = data.$router
-        axios.put("/article/revise", {
+        axios.put("/article", {
             id: data.id,
             title: data.title,
             content: data.content,
