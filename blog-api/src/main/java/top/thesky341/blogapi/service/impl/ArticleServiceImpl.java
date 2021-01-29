@@ -37,7 +37,6 @@ public class ArticleServiceImpl implements ArticleService {
         Assert.notNull(category, "分类不存在");
         Assert.notNull(admin, "用户不存在");
         articleContentMapper.addArticleContent(articleContent);
-        System.out.println(articleContent.getId());
         articleContent = articleContentMapper.getArticleContentById(articleContent.getId());
         article.setAuthor(admin);
         article.setCategory(category);

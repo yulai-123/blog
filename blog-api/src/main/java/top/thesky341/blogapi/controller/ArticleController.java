@@ -80,7 +80,6 @@ public class ArticleController {
         Pagination pagination = new Pagination();
         pagination.setFrom(paginationDto.getPageSize() * (paginationDto.getPosition() - 1));
         pagination.setNum(paginationDto.getPageSize());
-        System.out.println(paginationDto.getCategoryId());
         if(categoryService.getCategoryById(paginationDto.getCategoryId()) != null) {
             pagination.setCategoryId(paginationDto.getCategoryId());
         }

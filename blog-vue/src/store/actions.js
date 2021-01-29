@@ -1,31 +1,33 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8085"
+axios.defaults.baseURL = "http://thesky341.top:8085"
 axios.defaults.withCredentials = true
 
 let actions = {
     register: function (context, data) {
+        let $message = data.$message
         axios.post('/register', {
             name: data.name,
             passwd: data.passwd
         }).then(function (response) {
             let result = response.data;
             let code = result.code;
-            if(code === 0) {
-                alert("注册成功")
+            if (code === 0) {
+                $message.success("注册成功")
                 data.$router.push("/login")
-            } else if(code === 101) {
-                alert("用户名已存在，请重新注册")
-            } else if(code === 111) {
-                alert("用户名或密码不符合要求，请重新填写")
+            } else if (code === 101) {
+                $message.error("用户名已存在，请重新注册")
+            } else if (code === 111) {
+                $message.error("用户名或密码不符合要求，请重新填写")
             } else {
-                alert(result.message)
+                $message.error(result.message)
             }
         }).catch(function () {
-            alert("注册失败")
+            $message.error("注册失败")
         })
     },
     login: function (context, data) {
+        let $message = data.$message
         axios.post('/login', {
             name: data.name,
             passwd: data.passwd
@@ -41,15 +43,16 @@ let actions = {
                     data.$router.push("/")
                 }
             } else if(code === 111) {
-                alert("用户名或密码不符合要求，请重新填写")
+                $message.error("用户名或密码不符合要求，请重新填写")
             } else {
-                alert(result.message)
+                $message.error(result.message)
             }
         }).catch(function () {
-            alert("登录失败")
+            $message.error("登录失败")
         })
     },
-    logout: function (context) {
+    logout: function (context, data) {
+        let $message = data.$message
         axios.post('/logout').then(function (response) {
             let result = response.data;
             let code = result.code;
@@ -57,13 +60,14 @@ let actions = {
                 context.commit("setName", "")
                 context.commit("setLoginState", false)
             } else {
-                alert(result.message)
+                $message.error(result.message)
             }
         }).catch(function () {
-            alert("退出失败")
+            $message.error("退出失败")
         })
     },
-    getCategoryList: function (context) {
+    getCategoryList: function (context, data) {
+        let $message = data.$message
         axios.get("/categorylist").then((response) => {
             let result = response.data
             let code = result.code
@@ -71,7 +75,7 @@ let actions = {
                 let categoryList = result.data.categoryList
                 context.commit("setCategoryList", categoryList)
             } else {
-                console.log(result.message)
+                $message.error(result.message)
             }
         })
     },
@@ -84,20 +88,22 @@ let actions = {
             let result = response.data
             let code = result.code
             if(code === 0) {
-                context.dispatch('getCategoryList')
+                context.dispatch('getCategoryList', {
+                    $message: this.$message
+                })
                 $message({
                     type: 'success',
                     message: '新增分类：' + data.newCategoryName
                 });
             } else {
-                // console.log(result.message)
                 $message.error(result.message)
             }
         }).catch(() => {
             this.$message.error("新增分类失败")
         })
     },
-    checkLoginState: function (context) {
+    checkLoginState: function (context, data) {
+        let $message = data.$message
         axios.post("/checkloginstate").then((response) => {
             let result = response.data
             let code = result.code
@@ -109,10 +115,10 @@ let actions = {
                 context.commit("setName", "")
                 context.commit("setLoginState", false)
             } else {
-                console.log(result.message)
+                $message.error(result.message)
             }
         }).catch(() => {
-            console.log("查询登录状态出错")
+            $message.error("查询登录状态出错")
         })
     },
     addNewArticle: function (context, data) {
@@ -161,7 +167,7 @@ let actions = {
                 $message.error(result.message)
             }
         }).catch(() => {
-            $message.error("发表文章出现错误")
+            $message.error("修改文章出现错误")
         })
     }
 }

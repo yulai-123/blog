@@ -40,7 +40,7 @@
             return {
                 articles: [],
                 currentPage: 1,
-                articleSum: 1000
+                articleSum: 0
             }
         },
         methods: {
@@ -57,7 +57,7 @@
                         }
                     }
                 ).catch(
-                    () => {this.$message.error("获取文章出现错误")}
+                    () => {this.$message.error("获取文章列表出现错误")}
                 )
             },
             getArticleListByPagiantion(position) {
@@ -78,7 +78,7 @@
                         }
                     }
                 ).catch(
-                    () => {this.$message.error("获取文章出现错误")}
+                    () => {this.$message.error("获取文章列表出现错误")}
                 )
             },
             getArticleNumberByCategory() {

@@ -1,6 +1,6 @@
 let mutations = {
     setName (state, name) {
-        state.name = name
+        state.username = name
     },
     setLoginState (state, loginState) {
         state.loginState = loginState

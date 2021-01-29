@@ -130,8 +130,12 @@
             }
         },
         beforeMount() {
-            this.$store.dispatch("checkLoginState")
-            this.$store.dispatch("getCategoryList")
+            this.$store.dispatch("checkLoginState", {
+                $message: this.$message
+            })
+            this.$store.dispatch("getCategoryList", {
+                $message: this.$message
+            })
         },
         watch: {
             loginState: {

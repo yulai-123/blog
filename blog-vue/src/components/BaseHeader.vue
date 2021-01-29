@@ -53,11 +53,15 @@
         },
         methods: {
             logout: function () {
-                this.$store.dispatch("logout")
+                this.$store.dispatch("logout", {
+                    $message: this.$message
+                })
             }
         },
         beforeMount() {
-            this.$store.dispatch("checkLoginState")
+            this.$store.dispatch("checkLoginState", {
+                $message: this.$message
+            })
         }
     }
 </script>

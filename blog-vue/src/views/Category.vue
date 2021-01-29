@@ -38,13 +38,13 @@
             ...mapState(['categoryList'])
         },
         beforeMount() {
-            this.$store.dispatch("getCategoryList")
-            window.a = this
+            this.$store.dispatch("getCategoryList", {
+                $message: this.$message
+            })
         },
         methods: {
             viewCategory(id) {
                 let url = "/category/view/" + id
-                // console.log(url)
                 this.$router.push(url)
             }
         }

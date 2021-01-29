@@ -61,15 +61,15 @@
         methods: {
             login: function () {
                 this.$refs.form.validate((valid) => {
-                    console.log(valid)
                     if(valid) {
                         this.$store.dispatch("login", {
                             name: this.formdata.name,
                             passwd: this.formdata.passwd,
-                            $router: this.$router
+                            $router: this.$router,
+                            $message: this.$message
                         })
                     } else {
-                        console.log("error")
+                        this.$message.warning("请认真填写用户名和密码")
                     }
                 })
             }

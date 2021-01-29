@@ -7,7 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     loginState: false,
-    username: "世界天际",
+    username: "",
     categoryList: []
   },
   mutations: mutations,

@@ -14,7 +14,7 @@
                   background
                   layout="prev, pager, next"
                   :total="articleSum" class="pagination"
-                  @current-change="getArticleListByPagiantion">
+                  @current-change="changePage">
           </el-pagination>
         </el-col>
       </el-row>
@@ -27,7 +27,7 @@
 import BaseHeader from "../components/BaseHeader";
 import BaseFooter from "../components/BaseFooter";
 import BlogView from "../components/ArticleInfo"
-import axios from 'axios'
+import {getArticleListByPagiantion, getAllArticleNumber} from "../util/article"
 
 export default {
   name: 'Home',
@@ -40,67 +40,19 @@ export default {
     return {
       articles: [],
       currentPage: 1,
-      articleSum: 1000
+      articleSum: 0
     }
   },
   methods: {
-    getAllArticleInfomation() {
-      axios.get("/article/information/all").then(
-              (response) => {
-                let result = response.data
-                let code = result.code
-                let data = result.data
-                if(code === 0) {
-                  this.articles = data.articles
-                } else {
-                  this.$message.error(result.message)
-                }
-              }
-      ).catch(
-              () => {this.$message.error("获取文章出现错误")}
-      )
-    },
-    getArticleListByPagiantion(position) {
+    changePage(position) {
       this.currentPage = position
-      axios.post("/article/information/list", {
-        pageSize: 10,
-        position: this.currentPage
-      }).then(
-              (response) => {
-                let result = response.data
-                let code = result.code
-                let data = result.data
-                if(code === 0) {
-                  this.articles = data.articles
-                } else {
-                  this.$message.error(result.message)
-                }
-              }
-      ).catch(
-              () => {this.$message.error("获取文章出现错误")}
-      )
-    },
-    getAllArticleNumber() {
-        axios.post("/article/count/all").then(
-              (response) => {
-                let result = response.data
-                let code = result.code
-                let data = result.data
-                if(code === 0) {
-                  this.articleSum = data.sum
-                } else {
-                  this.$message.error(result.message)
-                }
-              }
-      ).catch(
-              () => {this.$message.error("获取文章数量错误")}
-      )
+      this.articles = getArticleListByPagiantion(position)
     }
   },
   beforeMount() {
-    window.a = this
-    this.getAllArticleNumber();
-    this.getArticleListByPagiantion(this.currentPage);
+    let that = this;
+    getAllArticleNumber(that);
+    this.articles = getArticleListByPagiantion(this.currentPage);
   }
 }
 </script>

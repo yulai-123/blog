@@ -120,7 +120,7 @@
                 }).then(({ value }) => {
                     this.$store.dispatch("addNewCategory", {
                         newCategoryName: value,
-                        "$message": this.$message
+                        $message: this.$message
                     })
                 }).catch(() => {
                     this.$message({
@@ -146,8 +146,12 @@
             }
         },
         beforeMount() {
-            this.$store.dispatch("checkLoginState")
-            this.$store.dispatch("getCategoryList")
+            this.$store.dispatch("checkLoginState", {
+                $message: this.$message
+            })
+            this.$store.dispatch("getCategoryList", {
+                $meesage: this.$meesage
+            })
             this.getArticleById(this.$route.params.id)
         },
         watch: {
