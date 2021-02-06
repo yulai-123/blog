@@ -31,7 +31,7 @@
 <script>
     import BaseHeader from "../components/BaseHeader";
     import BaseFooter from "../components/BaseFooter"
-    import axios from "axios"
+    import {getArticleById, deleteArticle, reviseArticle} from "../util/article"
     import {mapState} from "vuex"
 
     export default {
@@ -54,49 +54,11 @@
             }
         },
         methods: {
-            getArticleById(id) {
-                window.a = this
-                let url = "/article/" + id
-                axios.get(url).then((response) => {
-                    let result = response.data
-                    let code = result.code
-                    if(code === 0) {
-                        let data = result.data
-                        this.article = data.article
-                    } else {
-                        this.$message.error(result.message)
-                        if(window.history.length >= 3) {
-                            this.$router.go(-1)
-                        } else {
-                            this.$router.push("/")
-                        }
-                    }
-                }).catch(() => {
-                    this.$message.error("获取博客失败")
-                })
-            },
-            deleteArticle() {
-                let url = "/article/" + this.$route.params.id
-                axios.delete(url).then((response) => {
-                    let result = response.data
-                    let code = result.code
-                    if(code === 0) {
-                        this.$message.success("删除成功")
-                        if(window.history.length >= 3) {
-                            this.$router.go(-1)
-                        } else {
-                            this.$router.push("/")
-                        }
-                    } else {
-                        this.$message.error(result.message)
-                    }
-                }).catch(() => {
-                    this.$message.error("删除失败")
-                })
+            deleteArticle(){
+                deleteArticle(this, this.$route.params.id)
             },
             reviseArticle() {
-                let url = "/article/revise/" + this.$route.params.id
-                this.$router.push(url)
+                reviseArticle(this, this.$route.params.id)
             }
         },
         computed: {
@@ -106,11 +68,11 @@
             ...mapState(['loginState'])
         },
         beforeMount() {
-            this.getArticleById(this.$route.params.id)
+            getArticleById(this, this.$route.params.id)
         },
         watch: {
             $route(newValue) {
-                this.getArticleById(newValue.params.id)
+                getArticleById(this, newValue.params.id)
             }
         }
     }

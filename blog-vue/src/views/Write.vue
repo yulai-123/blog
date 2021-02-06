@@ -101,7 +101,6 @@
                 }
             },
             open() {
-                window.a = this
                 this.$prompt('请输入新的分类名', '', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',

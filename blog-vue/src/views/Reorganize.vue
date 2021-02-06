@@ -23,7 +23,7 @@
                         background
                         layout="prev, pager, next"
                         :total="articleSum" class="pagination"
-                        @current-change="getArticleListByPagiantion">
+                        @current-change="changePage">
                 </el-pagination>
             </el-col>
         </el-row>
@@ -34,7 +34,7 @@
 <script>
     import BaseFooter from "../components/BaseFooter"
     import BaseHeader from "../components/BaseHeader"
-    import axios from "axios"
+    import {getAllArticleNumber, getArticleListByPagiantion} from "../util/article"
 
     export default {
         name: "Reorganize",
@@ -50,54 +50,20 @@
             'base-footer': BaseFooter
         },
         methods: {
-            getArticleListByPagiantion(position) {
-                this.currentPage = position
-                axios.post("/article/information/list", {
-                    pageSize: 10,
-                    position: this.currentPage
-                }).then(
-                    (response) => {
-                        let result = response.data
-                        let code = result.code
-                        let data = result.data
-                        if(code === 0) {
-                            this.articles = data.articles} else {
-                            this.$message.error(result.message)
-                        }
-                    }
-                ).catch(
-                    () => {this.$message.error("获取文章出现错误")}
-                )
-            },
-            getAllArticleNumber() {
-                axios.post("/article/count/all").then(
-                    (response) => {
-                        let result = response.data
-                        let code = result.code
-                        let data = result.data
-                        if (code === 0) {
-                            this.articleSum = data.sum
-                        } else {
-                            this.$message.error(result.message)
-                        }
-                    }
-                ).catch(
-                    () => {
-                        this.$message.error("获取文章数量错误")
-                    }
-                )
-            },
             getSuitableDate(date) {
                 return date.substring(0, date.search("T"))
             },
             view(id) {
                 this.$router.push("/article/view/" + id)
+            },
+            changePage(position) {
+                this.currentPage = position
+                getArticleListByPagiantion(this, this.currentPage)
             }
         },
         beforeMount() {
-            window.a = this
-            this.getAllArticleNumber();
-            this.getArticleListByPagiantion(this.currentPage);
+            getAllArticleNumber(this);
+            getArticleListByPagiantion(this, this.currentPage);
         }
     }
 </script>

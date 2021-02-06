@@ -37,8 +37,8 @@
 <script>
     import BaseHeader from "../components/BaseHeader";
     import BaseFooter from "../components/BaseFooter";
+    import {getArticleById} from "../util/article"
     import {mapState} from 'vuex'
-    import axios from "axios"
 
     export default {
         name: "Write",
@@ -128,21 +128,6 @@
                         message: '取消新增'
                     });
                 });
-            },
-            getArticleById(id) {
-                let url = "/article/" + id
-                axios.get(url).then((response) => {
-                    let result = response.data
-                    let code = result.code
-                    if(code === 0) {
-                        let data = result.data
-                        this.article = data.article
-                    } else {
-                        this.$message.error(result.message)
-                    }
-                }).catch(() => {
-                    this.$message.error("获取博客失败")
-                })
             }
         },
         beforeMount() {
@@ -152,7 +137,7 @@
             this.$store.dispatch("getCategoryList", {
                 $meesage: this.$meesage
             })
-            this.getArticleById(this.$route.params.id)
+            getArticleById(this, this.$route.params.id)
         },
         watch: {
             loginState: {
@@ -164,7 +149,7 @@
                 }
             },
             $route(newValue) {
-                this.getArticleById(newValue.params.id)
+                getArticleById(this, newValue.params.id)
             }
         }
     }

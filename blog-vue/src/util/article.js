@@ -13,33 +13,30 @@ function resolveResponseData(response) {
     }
 }
 
-function getArticleListByPagiantion(currentPage) {
+function getArticleListByPagiantion(that, currentPage) {
     let articles = []
-    let flag = false
     axios.post("/article/information/list", {
         pageSize: 10,
         position: currentPage
     }).then(
         (response) => {
             articles = resolveResponseData(response)
-            flag = 1
+            that.articles = articles
         }
     ).catch(
         () => {
             Message.error("获取文章列表出现错误")
         }
     )
-    return articles
 }
 function getAllArticleNumber(that) {
-    let sum = 0
     axios.post("/article/count/all").then(
         (response) => {
             let result = response.data
             let code = result.code
-            let data = result.data
             if(code === 0) {
-                that.sum = data.sum
+                let data = result.data
+                that.articleSum = data.sum
             } else {
                 Message.error(result.message)
             }
@@ -49,10 +46,93 @@ function getAllArticleNumber(that) {
             Message.error("获取文章数量错误")
         }
     )
-    return sum
+}
+
+function getArticleNumberByCategory(that, categoryId) {
+    axios.post("/article/count", {
+        id: categoryId
+    }).then(
+        (response) => {
+            let result = response.data
+            let code = result.code
+            let data = result.data
+            if(code === 0) {
+                that.articleSum = data.sum
+            } else {
+                Message.error(result.message)
+            }
+        }
+    ).catch(
+        () => {Message.error("获取文章数量错误")}
+    )
+}
+
+function getArticleListByCategoryAndPagiantion(that, categoryId, currentPage) {
+    axios.post("/article/information/list", {
+        pageSize: 10,
+        position: currentPage,
+        categoryId: categoryId
+    }).then(
+        (response) => {
+            that.articles = resolveResponseData(response)
+        }
+    ).catch(
+        () => {Message.error("获取文章列表出现错误")}
+    )
+}
+
+function getArticleById(that, id) {
+    let url = "/article/" + id
+    axios.get(url).then((response) => {
+        let result = response.data
+        let code = result.code
+        if(code === 0) {
+            let data = result.data
+            that.article = data.article
+        } else {
+            Message.error(result.message)
+            if(window.history.length >= 3) {
+                that.$router.go(-1)
+            } else {
+                that.$router.push("/")
+            }
+        }
+    }).catch(() => {
+        Message.error("获取博客失败")
+    })
+}
+
+function deleteArticle(that, articleId) {
+    let url = "/article/" + articleId
+    axios.delete(url).then((response) => {
+        let result = response.data
+        let code = result.code
+        if(code === 0) {
+            Message.success("删除成功")
+            if(window.history.length >= 3) {
+                that.$router.go(-1)
+            } else {
+                that.$router.push("/")
+            }
+        } else {
+            Message.error(result.message)
+        }
+    }).catch(() => {
+        Message.error("删除失败")
+    })
+}
+
+function reviseArticle(that, articleId) {
+    let url = "/article/revise/" + articleId
+    that.$router.push(url)
 }
 
 export {
     getAllArticleNumber,
-    getArticleListByPagiantion
+    getArticleListByPagiantion,
+    getArticleListByCategoryAndPagiantion,
+    getArticleNumberByCategory,
+    getArticleById,
+    deleteArticle,
+    reviseArticle
 }

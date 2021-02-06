@@ -69,7 +69,7 @@
                             $message: this.$message
                         })
                     } else {
-                        this.$message.warning("请认真填写用户名和密码")
+                        this.$message.warning("请正确填写用户名和密码")
                     }
                 })
             }

@@ -14,7 +14,7 @@
                             background
                             layout="prev, pager, next"
                             :total="articleSum" class="pagination"
-                            @current-change="getArticleListByPagiantion">
+                            @current-change="changePage">
                     </el-pagination>
                 </el-col>
             </el-row>
@@ -27,7 +27,10 @@
     import BaseHeader from "../components/BaseHeader";
     import BaseFooter from "../components/BaseFooter";
     import BlogView from "../components/ArticleInfo"
-    import axios from 'axios'
+    import {
+        getArticleListByCategoryAndPagiantion,
+        getArticleNumberByCategory
+    } from "../util/article"
 
     export default {
         name: 'CategoryView',
@@ -40,70 +43,19 @@
             return {
                 articles: [],
                 currentPage: 1,
-                articleSum: 0
+                articleSum: 0,
+                categoryId: this.$route.params.id
             }
         },
         methods: {
-            getAllArticleInfomation() {
-                axios.get("/article/information/all").then(
-                    (response) => {
-                        let result = response.data
-                        let code = result.code
-                        let data = result.data
-                        if(code === 0) {
-                            this.articles = data.articles
-                        } else {
-                            this.$message.error(result.message)
-                        }
-                    }
-                ).catch(
-                    () => {this.$message.error("获取文章列表出现错误")}
-                )
-            },
-            getArticleListByPagiantion(position) {
+            changePage(position) {
                 this.currentPage = position
-                axios.post("/article/information/list", {
-                    pageSize: 10,
-                    position: this.currentPage,
-                    categoryId: this.$route.params.id
-                }).then(
-                    (response) => {
-                        let result = response.data
-                        let code = result.code
-                        let data = result.data
-                        if(code === 0) {
-                            this.articles = data.articles
-                        } else {
-                            this.$message.error(result.message)
-                        }
-                    }
-                ).catch(
-                    () => {this.$message.error("获取文章列表出现错误")}
-                )
-            },
-            getArticleNumberByCategory() {
-                axios.post("/article/count", {
-                    id: this.$route.params.id
-                }).then(
-                    (response) => {
-                        let result = response.data
-                        let code = result.code
-                        let data = result.data
-                        if(code === 0) {
-                            this.articleSum = data.sum
-                        } else {
-                            this.$message.error(result.message)
-                        }
-                    }
-                ).catch(
-                    () => {this.$message.error("获取文章数量错误")}
-                )
+                getArticleListByCategoryAndPagiantion(this, this.categoryId, this.currentPage)
             }
         },
         beforeMount() {
-            window.a = this
-            this.getArticleNumberByCategory();
-            this.getArticleListByPagiantion(this.currentPage);
+            getArticleNumberByCategory(this, this.categoryId)
+            getArticleListByCategoryAndPagiantion(this, this.categoryId, this.currentPage)
         }
     }
 </script>

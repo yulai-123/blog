@@ -46,13 +46,12 @@ export default {
   methods: {
     changePage(position) {
       this.currentPage = position
-      this.articles = getArticleListByPagiantion(position)
+      getArticleListByPagiantion(this, this.currentPage)
     }
   },
   beforeMount() {
-    let that = this;
-    getAllArticleNumber(that);
-    this.articles = getArticleListByPagiantion(this.currentPage);
+    getAllArticleNumber(this)
+    getArticleListByPagiantion(this, this.currentPage)
   }
 }
 </script>

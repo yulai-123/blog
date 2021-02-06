@@ -42,6 +42,7 @@ let actions = {
                 } else {
                     data.$router.push("/")
                 }
+
             } else if(code === 111) {
                 $message.error("用户名或密码不符合要求，请重新填写")
             } else {
