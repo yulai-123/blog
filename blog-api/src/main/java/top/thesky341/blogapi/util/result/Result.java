@@ -1,6 +1,9 @@
 package top.thesky341.blogapi.util.result;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import top.thesky341.blogapi.util.JWTUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,29 +30,35 @@ public class Result implements Serializable {
     @JsonProperty
     private Object data;
 
-    public Result() {
-    }
-
-    public Result(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public Result(ResultCode resultCode) {
-        this.code = resultCode.getCode();
-        this.message = resultCode.getMessage();
-    }
-
-    public Result(ResultCode resultCode, Object data) {
-        this.code = resultCode.getCode();
-        this.message = resultCode.getMessage();
-        this.data = data;
-    }
+    @JsonProperty
+    private String token;
 
     public Result(int code, String message, Object data) {
         this.code = code;
         this.message = message;
         this.data = data;
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            if(subject.isAuthenticated()) {
+                JWTUtil
+            }
+        }
+    }
+
+    public Result() {
+        this(-1, null, null);
+    }
+
+    public Result(int code, String message) {
+        this(code, message, null);
+    }
+
+    public Result(ResultCode resultCode) {
+        this(resultCode.getCode(), resultCode.getMessage(), null);
+    }
+
+    public Result(ResultCode resultCode, Object data) {
+        this(resultCode.getCode(), resultCode.getMessage(), data);
     }
 
     public static Result success() {

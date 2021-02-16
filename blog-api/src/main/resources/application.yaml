@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 
 ---
 server:
@@ -15,6 +15,10 @@ spring:
   profiles: dev
   jackson:
     default-property-inclusion: always
+
+jwt:
+  secret: qwertyuiopasdfghjklzxcvbnm1234567890qwe
+  expire: 604800000
 
 mybatis:
   type-aliases-package: top.thesky341.blogapi.entity

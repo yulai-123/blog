@@ -21,4 +21,9 @@ public class AdminServiceImpl implements AdminService {
         int id = admin.getId();
         return adminMapper.getAdminById(id);
     }
+
+    @Override
+    public Admin getAdminByName(String name) {
+        return adminMapper.getAdminByName(name);
+    }
 }

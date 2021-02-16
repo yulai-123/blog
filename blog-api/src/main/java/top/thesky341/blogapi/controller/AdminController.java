@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import top.thesky341.blogapi.entity.Admin;
 import top.thesky341.blogapi.service.AdminService;
 import top.thesky341.blogapi.util.Common;
+import top.thesky341.blogapi.util.JWTUtil;
 import top.thesky341.blogapi.util.encrypt.MD5SaltEncryption;
 import top.thesky341.blogapi.util.result.Result;
 import top.thesky341.blogapi.util.result.ResultCode;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -23,6 +26,17 @@ import javax.validation.Valid;
 public class AdminController {
     @Resource(name = "adminServiceImpl")
     private AdminService adminService;
+    @Resource(name = "jwtUtil")
+    private JWTUtil jwtUtil;
+
+    @RequiresAuthentication
+    @PostMapping("/hello")
+    public Result hello(HttpServletRequest request) {
+        System.out.println(request.getHeader("Token"));
+        Subject subject = SecurityUtils.getSubject();
+        System.out.println(subject.isAuthenticated());
+        return Result.success();
+    }
 
     @RequiresAuthentication
     @PostMapping("/register")
@@ -38,7 +52,8 @@ public class AdminController {
         UsernamePasswordToken token = new UsernamePasswordToken(admin.getName(), admin.getPasswd());
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
-        return Result.success();
+        admin = adminService.getAdminByName(admin.getName());
+        return Result.success("Token", jwtUtil.generateToken((long)admin.getId()));
     }
 
     @PostMapping("/logout")

@@ -1,20 +1,26 @@
 package top.thesky341.blogapi.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import top.thesky341.blogapi.util.JWTUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.Filter;
+import java.util.*;
 
 @Configuration
 public class ShiroConfig {
@@ -36,35 +42,76 @@ public class ShiroConfig {
     /**
      * userReaml 设置凭证匹配方式
      */
-    @Bean
-    public UserRealm userRealm(HashedCredentialsMatcher hashedCredentialsMatcher) {
+    @Bean("userRealm")
+    public UserRealm getUserRealm(HashedCredentialsMatcher hashedCredentialsMatcher) {
         UserRealm userRealm = new UserRealm();
         userRealm.setCredentialsMatcher(hashedCredentialsMatcher);
         return userRealm;
+    }
+
+    @Bean("jwtMatcher")
+    public JWTMatcher getJWTMatcher() {
+        return new JWTMatcher();
+    }
+
+    @Bean("jwtRealm")
+    public JWTRealm getJwtRealm(@Qualifier("jwtMatcher") JWTMatcher jwtMatcher) {
+        JWTRealm jwtRealm = new JWTRealm();
+        jwtRealm.setCredentialsMatcher(jwtMatcher);
+        return jwtRealm;
+    }
+
+    @Bean("subjectFactory")
+    public MySubjectFactory getMySubjectFactory() {
+        return new MySubjectFactory();
     }
 
     /**
      * securityManager 设置 userRealm
      */
     @Bean
-    public SecurityManager securityManager(@Qualifier("userRealm") UserRealm userRealm) {
+    public SecurityManager securityManager(@Qualifier("userRealm") UserRealm userRealm,
+                                           @Qualifier("jwtRealm") JWTRealm jwtRealm,
+                                           @Qualifier("subjectFactory") MySubjectFactory subjectFactory) {
         DefaultSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(userRealm);
+
+        List<Realm> realms = new ArrayList<>();
+        realms.add(userRealm);
+        realms.add(jwtRealm);
+
+        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
+        authenticator.setRealms(realms);
+        authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
+        securityManager.setAuthenticator(authenticator);
+
+
+        //设置 securityManager 的 subjectDao 的 SessionStorageEvaluator 的 SessionStorageEnabled 为 false
+        //因为面向接口编程，导致部分方法在接口中不存在却要使用，因此强转
+        ((DefaultWebSessionStorageEvaluator)(((DefaultSubjectDAO)(securityManager.getSubjectDAO())).getSessionStorageEvaluator()))
+                .setSessionStorageEnabled(false);
+
+        securityManager.setSubjectFactory(subjectFactory);
+
         return securityManager;
     }
 
     /**
-     * shiroFileterFactory 设置了 SecurityManager
+     * shiroFilterFactory 设置了 SecurityManager
      * 设置了权限，项目实际需要权限是通过注解方式声明的
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager securityManager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager securityManager,
+                                                         @Qualifier("jwtUtil")JWTUtil jwtUtil) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String, String> m = new HashMap<>();
         m.put("/**", "anon");
+        m.put("/**", "jwtFilter");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(m);
         shiroFilterFactoryBean.setLoginUrl("/shiro/login");
+        Map<String, Filter> filters = new LinkedHashMap<>();
+        filters.put("jwtFilter", new JWTFilter(jwtUtil));
+        shiroFilterFactoryBean.setFilters(filters);
         return shiroFilterFactoryBean;
     }
 
