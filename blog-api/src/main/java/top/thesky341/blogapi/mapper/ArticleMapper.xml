@@ -59,9 +59,9 @@
 
     <resultMap id="articleMap" type="article">
         <id property="id" column="id"/>
-        <result property="createDate" column="create_date"/>
-        <result property="reviseDate" column="revise_date"/>
-        <result property="title" column="title"/>
+        <resultUtil property="createDate" column="create_date"/>
+        <resultUtil property="reviseDate" column="revise_date"/>
+        <resultUtil property="title" column="title"/>
         <association property="category" column="category_id"
                      javaType="category"
                      select="top.thesky341.blogapi.mapper.CategoryMapper.getCategoryById"/>

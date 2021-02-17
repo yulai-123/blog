@@ -40,7 +40,7 @@ public class UserRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         } else {
             ByteSource salt = ByteSource.Util.bytes(name);
-            AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(name, admin.getPasswd(), salt, getName());
+            AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(admin.getId(), admin.getPasswd(), salt, getName());
             return authenticationInfo;
         }
     }

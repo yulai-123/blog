@@ -32,9 +32,7 @@ public class JWTFilter extends FormAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         Assert.notNull(jwtUtil, "jwtUtil 不允许为null");
-        System.out.println("isAccessAllowed");
         String token = getRequestToken((HttpServletRequest) request);
-        System.out.println("Token为：" + token);
         if(token != null) {
             try {
                 int userId = jwtUtil.parseToken(token);

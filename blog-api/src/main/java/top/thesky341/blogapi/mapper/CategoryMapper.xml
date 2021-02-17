@@ -36,7 +36,7 @@
 
     <resultMap id="categoryMap" type="category">
         <id column="id" property="id"/>
-        <result column="name" property="name"/>
+        <resultUtil column="name" property="name"/>
     </resultMap>
 
 </mapper>

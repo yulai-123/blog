@@ -37,7 +37,7 @@ public class JWTUtil implements InitializingBean {
     public JWTUtil() {
     }
 
-    public String generateToken(Long userId) {
+    public String generateToken(Integer userId) {
         Date nowDate = new Date();
         Date expiredDate = new Date(nowDate.getTime() + expire);
         return Jwts.builder().setSubject(userId + "")

@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.thesky341.blogapi.entity.Admin;
 import top.thesky341.blogapi.service.AdminService;
@@ -11,10 +12,10 @@ import top.thesky341.blogapi.util.Common;
 import top.thesky341.blogapi.util.JWTUtil;
 import top.thesky341.blogapi.util.encrypt.MD5SaltEncryption;
 import top.thesky341.blogapi.util.result.Result;
+import top.thesky341.blogapi.util.result.ResultUtil;
 import top.thesky341.blogapi.util.result.ResultCode;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -24,10 +25,14 @@ import javax.validation.Valid;
  */
 @RestController
 public class AdminController {
+    @Resource(name = "resultUtil")
+    private ResultUtil resultUtil;
     @Resource(name = "adminServiceImpl")
     private AdminService adminService;
     @Resource(name = "jwtUtil")
     private JWTUtil jwtUtil;
+    @Autowired
+    private Common common;
 
     @RequiresAuthentication
     @PostMapping("/hello")
@@ -35,7 +40,7 @@ public class AdminController {
         System.out.println(request.getHeader("Token"));
         Subject subject = SecurityUtils.getSubject();
         System.out.println(subject.isAuthenticated());
-        return Result.success();
+        return resultUtil.success();
     }
 
     @RequiresAuthentication
@@ -44,7 +49,7 @@ public class AdminController {
         String encryptedPasswd = MD5SaltEncryption.encrypt(admin.getPasswd(), admin.getName());
         admin.setPasswd(encryptedPasswd);
         adminService.addAdmin(admin);
-        return Result.success("name", admin.getName());
+        return resultUtil.success("name", admin.getName());
     }
 
     @PostMapping("/login")
@@ -53,24 +58,24 @@ public class AdminController {
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
         admin = adminService.getAdminByName(admin.getName());
-        return Result.success("Token", jwtUtil.generateToken((long)admin.getId()));
+        return resultUtil.success("Token", jwtUtil.generateToken(admin.getId()));
     }
 
     @PostMapping("/logout")
     public Result logout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return Result.success();
+        return resultUtil.success();
     }
 
     @PostMapping("/checkloginstate")
     public Result checkLoginState() {
         Subject subject = SecurityUtils.getSubject();
         if(subject.isAuthenticated()) {
-            String name = Common.getCurrentUserName();
-            return Result.success("name", name);
+            String name = common.getCurrentUserName();
+            return resultUtil.success("name", name);
         } else {
-            return new Result(ResultCode.UnauthenticatedException);
+            return resultUtil.getResult(ResultCode.UnauthenticatedException);
         }
     }
 
@@ -80,6 +85,6 @@ public class AdminController {
      */
     @RequestMapping("/shiro/login")
     public Result shiroLogin() {
-        return new Result(ResultCode.NeedLogin);
+        return resultUtil.getResult(ResultCode.NeedLogin);
     }
 }

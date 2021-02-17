@@ -31,7 +31,7 @@ public class JWTRealm extends AuthorizingRealm {
         if (admin == null) {
             throw new UnknownAccountException();
         } else {
-            AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(admin.getName(), null, getName());
+            AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(admin.getId(), null, getName());
             return authenticationInfo;
         }
     }
