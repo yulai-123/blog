@@ -30,8 +30,8 @@
 
     <resultMap id="adminMap" type="admin">
         <id property="id" column="id"/>
-        <resultUtil column="name" property="name"/>
-        <resultUtil property="passwd" column="passwd"/>
+        <result column="name" property="name"/>
+        <result property="passwd" column="passwd"/>
     </resultMap>
 
 </mapper>

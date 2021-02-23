@@ -27,7 +27,7 @@
 
     <resultMap id="articleContentMap" type="articleContent">
         <id property="id" column="id"/>
-        <resultUtil property="content" column="content"/>
+        <result property="content" column="content"/>
     </resultMap>
 
 </mapper>

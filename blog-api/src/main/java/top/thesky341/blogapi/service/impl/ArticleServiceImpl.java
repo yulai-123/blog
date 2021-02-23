@@ -10,6 +10,7 @@ import top.thesky341.blogapi.mapper.ArticleContentMapper;
 import top.thesky341.blogapi.mapper.ArticleMapper;
 import top.thesky341.blogapi.mapper.CategoryMapper;
 import top.thesky341.blogapi.service.ArticleService;
+import top.thesky341.blogapi.util.RedisUtil;
 
 import java.util.List;
 
@@ -20,13 +21,15 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
-    ArticleMapper articleMapper;
+    private ArticleMapper articleMapper;
     @Autowired
-    ArticleContentMapper articleContentMapper;
+    private ArticleContentMapper articleContentMapper;
     @Autowired
-    CategoryMapper categoryMapper;
+    private CategoryMapper categoryMapper;
     @Autowired
-    AdminMapper adminMapper;
+    private AdminMapper adminMapper;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Transactional
     @Override
@@ -47,8 +50,17 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article getArticleInformation(int id) {
+        String key = "article:id:" + id;
+        if (redisUtil.hasKey(key)) {
+            redisUtil.updateExpire(key);
+            Object value = redisUtil.getKey(key);
+            if(value instanceof Article) {
+                return (Article)value;
+            }
+        }
         Article article = articleMapper.getArticleById(id);
         Assert.notNull(article, "文章不存在");
+        redisUtil.setKey(key, article);
         return article;
     }
 
@@ -60,6 +72,15 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public int getAllArticleNumber() {
+        String key = "article:sum";
+        if (redisUtil.hasKey(key)) {
+            Object value = redisUtil.getKey(key);
+            if(value instanceof Integer) {
+                return (Integer) value;
+            }
+        }
+        int sum = articleMapper.getAllArticleNumber();
+        redisUtil.setKey(key, sum, -1);
         return articleMapper.getAllArticleNumber();
     }
 
@@ -75,7 +96,18 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article getArticleById(int id) {
-        return articleMapper.getArticleById(id);
+        String key = "article:id:" + id;
+        if (redisUtil.hasKey(key)) {
+            redisUtil.updateExpire(key);
+            Object value = redisUtil.getKey(key);
+            if(value instanceof Article) {
+                return (Article)value;
+            }
+        }
+        Article article = articleMapper.getArticleById(id);
+        Assert.notNull(article, "文章不存在");
+        redisUtil.setKey(key, article);
+        return article;
     }
 
     @Transactional
@@ -85,6 +117,12 @@ public class ArticleServiceImpl implements ArticleService {
         Assert.notNull(article, "文章不存在");
         ArticleContent articleContent = article.getContent();
         articleMapper.deleteArticleById(article.getId());
+
+        String key = "article:id" + id;
+        if(redisUtil.hasKey(key)) {
+            redisUtil.delKey(key);
+        }
+
         articleContentMapper.deleteArticleContentById(articleContent.getId());
     }
 
@@ -107,6 +145,12 @@ public class ArticleServiceImpl implements ArticleService {
         article.setContent(articleContent);
         articleMapper.updateArticle(article);
         articleContentMapper.deleteArticleContentById(oldArticle.getContent().getId());
+
+        String key = "article:id" + id;
+        if(redisUtil.hasKey(key)) {
+            redisUtil.delKey(key);
+        }
+
         return articleMapper.getArticleById(article.getId());
     }
 }
