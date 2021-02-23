@@ -54,7 +54,7 @@ public class JWTFilter extends FormAuthenticationFilter {
     }
 
     private String getRequestToken(HttpServletRequest request) {
-        String token = request.getHeader("Token");
+        String token = request.getHeader("Auth-Token");
         return token;
     }
 }

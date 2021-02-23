@@ -58,7 +58,7 @@ public class AdminController {
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
         admin = adminService.getAdminByName(admin.getName());
-        return resultUtil.success("Token", jwtUtil.generateToken(admin.getId()));
+        return resultUtil.success();
     }
 
     @PostMapping("/logout")

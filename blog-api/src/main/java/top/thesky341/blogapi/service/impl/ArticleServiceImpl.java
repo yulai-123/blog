@@ -45,6 +45,9 @@ public class ArticleServiceImpl implements ArticleService {
         article.setCategory(category);
         article.setContent(articleContent);
         articleMapper.addArticle(article);
+        if(redisUtil.hasKey("article:sum")) {
+            redisUtil.delKey("article:sum");
+        }
         return articleMapper.getArticleById(article.getId());
     }
 
@@ -122,7 +125,9 @@ public class ArticleServiceImpl implements ArticleService {
         if(redisUtil.hasKey(key)) {
             redisUtil.delKey(key);
         }
-
+        if(redisUtil.hasKey("article:sum")) {
+            redisUtil.delKey("article:sum");
+        }
         articleContentMapper.deleteArticleContentById(articleContent.getId());
     }
 
